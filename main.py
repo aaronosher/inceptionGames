@@ -1,3 +1,3 @@
 import views
 
-views.viewInit(views.view)
+views.viewInit()
