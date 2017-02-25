@@ -81,5 +81,3 @@ def devMenuButtonPush(menuItem):
     global server
     if menuItem is "dev_server_set":
         server = gui.textBox('dev_server', 'set dev_server')
-
-    print(server)
