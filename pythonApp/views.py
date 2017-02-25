@@ -4,6 +4,7 @@ import requests
 gui = gui("Inception Games", "800x600")
 gameID = ""
 ownName = ""
+server = ""
 
 def viewInit():
     global gui
@@ -11,6 +12,10 @@ def viewInit():
     gui.setFont(20)
     gui.setIcon("./resources/images/Tic-tac-toe.gif")
     gui.addMenuList("Game", ["Create Game", "Join Game"], menuButtonPush)
+
+    # Dev menu
+    gui.addMenuList("Developer", ["dev_server_set", "dev_option"], devMenuButtonPush)
+
     gui.addLabel("welcomeText", "Welcome to Incpetion Games", 0, 0, 2)
     gui.addLabel("decisionText", "Would you like to create or join a game?", 1, 0, 2)
     gui.addButton("Create Game", createGamePart1, 4, 0)
@@ -70,3 +75,11 @@ def connectToGame(param):
     gui.setEntryState("name", "disabled")
     gui.setEntryState("gameID", "disabled")
     gui.setButtonState("Join Game", "disabled")
+
+def devMenuButtonPush(menuItem):
+    global gui
+    global server
+    if menuItem is "dev_server_set":
+        server = gui.textBox('dev_server', 'set dev_server')
+
+    print(server)
