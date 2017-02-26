@@ -1,10 +1,13 @@
 from appJar import gui
 import requests
+import socketConnect
 
 gui = gui("Inception Games", "800x600")
 gameID = ""
 ownName = ""
-server = ""
+socketServer = "localhost"
+socketPort = "5555"
+
 
 def viewInit():
     global gui
@@ -14,7 +17,7 @@ def viewInit():
     gui.addMenuList("Game", ["Create Game", "Join Game"], menuButtonPush)
 
     # Dev menu
-    gui.addMenuList("Developer", ["dev_server_set", "dev_option"], devMenuButtonPush)
+    gui.addMenuList("Developer", ["dev_server_set", "dev_server_port_set"], devMenuButtonPush)
 
     gui.addLabel("welcomeText", "Welcome to Incpetion Games", 0, 0, 2)
     gui.addLabel("decisionText", "Would you like to create or join a game?", 1, 0, 2)
@@ -71,13 +74,21 @@ def joinGame(param):
 
 def connectToGame(param):
     global gui
+    global gameID
+    global ownName
     gui.setTitle("Inception Games | Connecting...")
     gui.setEntryState("name", "disabled")
     gui.setEntryState("gameID", "disabled")
     gui.setButtonState("Join Game", "disabled")
+    gameID = gui.getEntry("gameID")
+    ownName = gui.getEntry("name")
+    socketConnect.joinGame()
 
 def devMenuButtonPush(menuItem):
     global gui
-    global server
+    global socketServer
+    global socketPort
     if menuItem is "dev_server_set":
-        server = gui.textBox('dev_server', 'set dev_server')
+        socketServer = str(gui.textBox('dev_server', 'set dev_server'))
+    elif menuItem is "dev_server_port_set":
+        socketServer = str(gui.textBox('dev_server_port', 'set dev_server_port'))
