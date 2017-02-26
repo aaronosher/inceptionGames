@@ -43,13 +43,17 @@ def createGamePart1(param):
 
 def createGamePart2(param):
     global gui
-    global gameID
     global ownName
     ownName = gui.getEntry("name")
     gui.removeAllWidgets()
 
-    # server requests to intialize the Game
-    gameID = "8FG9EX"
+    socketConnect.createGame()
+
+def createGamePart3():
+    global gui
+    global ownName
+    global gameID
+    print('GameID: '+gameID)
 
     gui.setTitle("Iception Games | Waiting for Player... | Game ID: "+gameID)
     gui.addLabel("waitingForGameText1", "Hi "+ownName+", you have succesfully created a game.", 0, 0, 2)
