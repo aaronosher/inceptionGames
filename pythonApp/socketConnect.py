@@ -15,7 +15,7 @@ def Main(msg):
         s.send(message.encode())
         data = s.recv(2048).decode()
 
-        print ('Received from server: ' + data)
+        # Data Analysis
 
     s.close()
 

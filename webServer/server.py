@@ -1,72 +1,48 @@
-import socket
-import sys
-from _thread import *
-import os.path
-import json
+#!/usr/bin/env python
 
+import socket, threading
 
-host = ''
+class ClientThread(threading.Thread):
+
+    def __init__(self, ip, port, socket):
+        threading.Thread.__init__(self)
+        self.ip = ip
+        self.port = port
+        self.socket = socket
+        print("[+] New thread started for "+ip+":"+str(port))
+
+    def run(self):
+        print("Connection from : "+ip+":"+str(port))
+
+        clientsock.send(str("connected").encode())
+
+        data = "dummydata"
+
+        while len(data):
+            data = clientsock.recv(2048).decode('utf-8')
+            print("Client sent : "+data)
+            # Data Analysis
+            clientsock.send(("You sent me : "+data).encode())
+
+        print("Client disconnected...")
+
+host = "localhost"
 port = 5555
-s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
-try:
-    s.bind((host, port))
-except socket.error as e:
-    print(str(e))
+tcpsock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+tcpsock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
 
-s.listen(5)
-print('waiting for a connection')
+tcpsock.bind((host,port))
+threads = []
 
-def threaded_client(conn):
-    msg = {'state': 'connected'}
-    conn.send(str.encode(json.dumps(msg)))
-
-    while True:
-        data = conn.recv(2048)
-        if not data:
-            break
-        print('Data Recieved: '+data.decode('utf-8'))
-        recieved = json.loads(data.decode('utf-8').strip())
-
-        if not recieved['action']:
-            break
-
-        elif recieved['action'] == str("join_game"):
-            reply = joinGame(recieved)
-
-        elif recieved['action'] == str("create_game"):
-            reply = createGame(recieved)
-
-        else:
-            print('no valid actions')
-            break
-
-        conn.sendall(str.encode(reply))
-
-    conn.close()
-
-def joinGame(data):
-    gameID = data['gameID']
-    p2_name = data['p2_name']
-    if os.path.isfile('./games/'+gameID+'.incept'):
-        gameFile = open('./games/'+gameID+'.incept', 'r')
-        game = json.loads(gameFile.read())
-        if not game['p2']:
-            game['p2'] = p2_name
-            gameFile.close()
-            gameFile = open('./games/'+gameID+'.incept', 'w')
-            gameFile.write(json.dumps(game))
-            gameFile.close()
-            return str(json.dumps(game))
-    else:
-        error = {'error': 'invalid gameID'}
-        return str(json.dumps(error))
-
-def createGame(data):
-    return false
 
 while True:
-    conn, addr = s.accept()
-    print('connection to:'+addr[0]+':'+str(addr[1]))
+    tcpsock.listen(4)
+    print("\nListening for incoming connections...")
+    (clientsock, (ip, port)) = tcpsock.accept()
+    newthread = ClientThread(ip, port, clientsock)
+    newthread.start()
+    threads.append(newthread)
 
-    start_new_thread(threaded_client, (conn, ))
+for t in threads:
+    t.join()
