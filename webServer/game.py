@@ -7,10 +7,12 @@ import os
 
 class game:
     game_id = None
-    host_player = { "name": "", "id": None }
-    guest_player = { "name": "", "id": None }
+    host_player = { "name": "", "id": 1 }
+    guest_player = { "name": "", "id": 2 }
     current_turn = 1
     current_grid = None
+    host_socket = None
+    guest_socket = None
 
     # 1,1 is top left
     game_board = {
@@ -149,11 +151,12 @@ class game:
                 newId = self.generateId()
                 fileToCheck = Path(os.getcwd()+'/webserver/games/'+newId+'.incept')
 
-        gameFile = open(os.getcwd()+'/webserver/games/'+str(newId)+'.incept', 'w')
+        gameFile = open(os.getcwd()+'/games/'+str(newId)+'.incept', 'w')
 
         self.game_id = newId
-        self.host_player['id'] = host['id']
+        self.host_player['id'] = 1
         self.host_player['name'] = host['name']
+        self.host_socket = host['socket']
 
         game = {
             "game_id": self.game_id,
